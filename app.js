@@ -1,26 +1,3 @@
-const players =   [
-{
-    name: "Guil",
-    score: 50,
-    id: 1
-  },
-  {
-    name: "Treasure",
-    score: 85,
-    id: 2
-  },
-  {
-    name: "Ashley",
-    score: 95,
-    id: 3
-  },
-  {
-    name: "James",
-    score: 80,
-    id: 4
-  }
-]
-
 const Header = (props) => {
     console.log(props)
     return (
@@ -33,38 +10,73 @@ const Header = (props) => {
 }
 
 const Player = (props) => {
-    console.log(props)
     return (
         <div className="player">
-            <span className="player-Name">{props.name}</span>
-
+            <span className="player-name">
+            <button className="remove-player" onClick={ () => props.removePlayer(props.id) }>✖</button>
+            {props.name}
+            </span>
             <Counter 
             /> 
         </div>
     );
 }
 
-const App = (props) => {
-    {/* PARENT COMPONENT PASSES DOWN INFO TO CHILDREN COMPONENT */}
-    return (
-        <div className="scoreboard">
-        <Header 
-            title="Scoreboard" 
-            totalPlayers={props.initialPlayers.length}
-            isFun
-        />
+class App extends React.Component {
+    // {/* PARENT COMPONENT PASSES DOWN INFO TO CHILDREN COMPONENT */}
 
-        {/*Player list*/}
-        {/* ADD KEY PROPS WHEN ITERATING OVER AN ARRAY OF ITEMS
-        THAT WILL BE REARANGED, ADDED, OR DELETED IN YOUR UI*/}
-        {props.initialPlayers.map( player =>
-        <Player 
-            name={player.name}
-            key={player.id.toString()}
-        /> 
-        )}
-        </div>
-    );
+    state = {
+        players: [
+                {
+                    name: "Guil",
+                    id: 1
+                  },
+                  {
+                    name: "Treasure",
+                    id: 2
+                  },
+                  {
+                    name: "Ashley",
+                    id: 3
+                  },
+                  {
+                    name: "James",
+                    id: 4
+                  }
+                ]
+    };
+
+    handleRemovePlayer = (id) => {
+        this.setState( prevState => {
+            return {
+                players: prevState.players.filter( player => player.id !== id)
+            }
+        });
+    }
+
+    render() {
+        return (
+            <div className="scoreboard">
+            <Header 
+                title="Scoreboard" 
+                totalPlayers={this.state.players.length}
+                isFun
+            />
+    
+            {/*Player list*/}
+            {/* ADD KEY PROPS WHEN ITERATING OVER AN ARRAY OF ITEMS
+            THAT WILL BE REARANGED, ADDED, OR DELETED IN YOUR UI*/}
+            {this.state.players.map( player =>
+            <Player 
+                name={player.name}
+                key={player.id.toString()}
+                id={player.id}
+                removePlayer={this.handleRemovePlayer}
+            /> 
+            )}
+            </div>
+        );
+    }
 }
 
  {/* this.setState lets react know when state changes and to re-render
@@ -80,15 +92,15 @@ class Counter extends React.Component {
     }
 
     incrementScore = () => {
-        this.setState({
-            score: this.state.score + 1
-        });
+        this.setState( prevState => ({
+                score: prevState.score + 1
+        }));
     }
 
     decrementScore = () => {
-        this.setState({
-            score: this.state.score - 1
-        });
+        this.setState( prevState => ({
+                score: prevState.score - 1
+        }));
     }
 
     render() {
@@ -103,6 +115,6 @@ class Counter extends React.Component {
 }
 
 ReactDOM.render(
-   <App initialPlayers={players}/>,
+   <App />,
     document.getElementById('App')
 );
